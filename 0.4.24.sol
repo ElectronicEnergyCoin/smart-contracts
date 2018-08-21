@@ -364,9 +364,9 @@ contract MyAdvancedToken is MintableToken {
         uint256 beneficialAmt = 1000000e18; //1 million at beneficial
         uint256 founderAmt = totalSupply.sub(1000000e18);
 
-        balances[founder] = founderAmt;
+        balances[msg.sender] = founderAmt;
         balances[beneficial] = beneficialAmt;
-        emit Transfer(0x0, founder, founderAmt);
+        emit Transfer(0x0, msg.sender, founderAmt);
         emit Transfer(0x0, beneficial, beneficialAmt);
         //pause();
     }
