@@ -349,7 +349,7 @@ contract MyAdvancedToken is MintableToken {
     uint8 public decimals;
 
     event TokensBurned(address initiatior, address indexed _partner, uint256 _tokens);
- 
+
 
     /**
     * @dev Constructor that gives the founder all of the existing tokens.
@@ -360,8 +360,14 @@ contract MyAdvancedToken is MintableToken {
         decimals = 18;
         totalSupply = 1000000000e18;
 
-        balances[founder] = totalSupply;
-        emit Transfer(0x0, msg.sender, totalSupply);
+        address beneficial = 0x6784520Ac7fbfad578ABb5575d333A3f8739A5af;
+        uint256 beneficialAmt = 1000000e18; //1 million at beneficial
+        uint256 founderAmt = totalSupply.sub(1000000e18);
+
+        balances[founder] = founderAmt;
+        balances[beneficial] = beneficialAmt;
+        emit Transfer(0x0, founder, founderAmt);
+        emit Transfer(0x0, beneficial, beneficialAmt);
         //pause();
     }
 
