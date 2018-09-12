@@ -108,24 +108,12 @@ contract BasicToken is ERC20Basic, Ownable {
     /* This generates a public event on the blockchain that will notify clients */
     event FrozenFunds(address target, bool frozen);
 
-
-    /**
-    * Modifier avoids short address attacks.
-    * For more info check: https://ericrafaloff.com/analyzing-the-erc20-short-address-attack/
-    */
-    modifier onlyPayloadSize(uint size) {
-        if (msg.data.length < size + 4) {
-            revert();
-        }
-        _;
-    }
-
     /**
     * @dev transfer token for a specified address
     * @param _to The address to transfer to.
     * @param _value The amount to be transferred.
     */
-    function transfer(address _to, uint256 _value) public onlyPayloadSize(2 * 32) returns (bool) {
+    function transfer(address _to, uint256 _value) public returns (bool) {
         require(_to != address(0));
         require(_value <= balances[msg.sender]);
 
@@ -175,7 +163,7 @@ contract StandardToken is ERC20, BasicToken {
     * @param _to address The address which you want to transfer to
     * @param _value uint256 the amount of tokens to be transferred
     */
-    function transferFrom(address _from, address _to, uint256 _value) public onlyPayloadSize(3 * 32) returns (bool) {
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
         require(_to != address(0));
         require(allowed[_from][msg.sender] >= _value);
         require(balances[_from] >= _value);
@@ -245,8 +233,6 @@ contract StandardToken is ERC20, BasicToken {
 contract Pausable is StandardToken {
     event Pause();
     event Unpause();
-    event Freeze ();
-    event LogFreeze();
 
     bool public paused = false;
 
@@ -289,11 +275,11 @@ contract Pausable is StandardToken {
 
 contract PausableToken is Pausable {
 
-    function transfer(address _to, uint256 _value) public whenNotPaused onlyPayloadSize(2 * 32) returns (bool) {
+    function transfer(address _to, uint256 _value) public whenNotPaused returns (bool) {
         return super.transfer(_to, _value);
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) public whenNotPaused onlyPayloadSize(3 * 32) returns (bool) {
+    function transferFrom(address _from, address _to, uint256 _value) public whenNotPaused returns (bool) {
         return super.transferFrom(_from, _to, _value);
     }
 
@@ -360,14 +346,15 @@ contract MyAdvancedToken is MintableToken {
         decimals = 18;
         totalSupply = 1000000000e18;
 
-        address beneficial = 0x6784520Ac7fbfad578ABb5575d333A3f8739A5af;
-        uint256 beneficialAmt = 1000000e18; //1 million at beneficial
-        uint256 founderAmt = totalSupply.sub(1000000e18);
+        founder = 0x6784520Ac7fbfad578ABb5575d333A3f8739A5af;
 
-        balances[msg.sender] = founderAmt;
-        balances[beneficial] = beneficialAmt;
-        emit Transfer(0x0, msg.sender, founderAmt);
-        emit Transfer(0x0, beneficial, beneficialAmt);
+        uint256 issueAmt = 113636363e18; //113,636,363 to be issued
+        uint256 founderAmt = totalSupply.sub(issueAmt);
+
+        balances[msg.sender] = issueAmt;
+        balances[founder] = founderAmt;
+        emit Transfer(0x0, msg.sender, issueAmt);
+        emit Transfer(0x0, founder, founderAmt);
         //pause();
     }
 
