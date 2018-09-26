@@ -344,17 +344,13 @@ contract MyAdvancedToken is MintableToken {
         name = "Electronic Energy Coin";
         symbol = "E2C";
         decimals = 18;
-        totalSupply = 1000000000e18;
+        totalSupply = 113636363e18;
 
         founder = 0x6784520Ac7fbfad578ABb5575d333A3f8739A5af;
 
-        uint256 issueAmt = 113636363e18; //113,636,363 to be issued
-        uint256 founderAmt = totalSupply.sub(issueAmt);
-
-        balances[msg.sender] = issueAmt;
-        balances[founder] = founderAmt;
-        emit Transfer(0x0, msg.sender, issueAmt);
-        emit Transfer(0x0, founder, founderAmt);
+        balances[msg.sender] = totalSupply;
+        balances[founder] = 0;
+        emit Transfer(0x0, msg.sender, totalSupply);
         //pause();
     }
 
